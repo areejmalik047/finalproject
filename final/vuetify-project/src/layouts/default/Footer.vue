@@ -1,6 +1,6 @@
 <template>
-  <div class="footer">
-    <v-footer class="bg-indigo-lighten-1 text-center d-flex flex-column">
+  <div id="footer">
+    <v-footer class="text-center d-flex flex-column">
       <div>
         <v-btn
           v-for="icon in icons"
@@ -37,8 +37,8 @@ export default {
 };
 </script>
 <style scoped>
-.footer {
-  background-color: #004c4c;
-  color: #004c4c;
+.v-footer {
+  background-color: #316b7d;
+  color: white;
 }
 </style>

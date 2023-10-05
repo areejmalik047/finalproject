@@ -10,42 +10,36 @@
             append-icon="mdi-magnify"
             single-line
             hide-details
-            @input="filterProducts"
+            @input="filterbooks"
           ></v-text-field>
         </v-col>
       </v-row>
       <v-row>
-        <v-col  v-for="product in filteredProducts" :key="product.id" md="3" sm="6">
+        <v-col v-for="book in filteredbooks" :key="book.id" md="3" sm="6">
           <v-card class="mx-auto" max-width="344">
-            <v-img :src="product.thumbnail" height="200px" cover></v-img>
-
-            <v-card-title>title:{{ product.title }}</v-card-title>
-
-            <v-card-subtitle>price${{ product.price }}</v-card-subtitle>
-            <v-card-subtitle>Rating:{{ product.rating }}</v-card-subtitle>
+            <v-img :src="book.cover_image" height="200px" cover></v-img>
+            <v-card-title>title:{{ book.title }}</v-card-title>
+            <v-card-subtitle>price${{ book.price }}</v-card-subtitle>
+            <v-card-subtitle>Rating:{{ book.rating }}</v-card-subtitle>
             <v-card-actions>
-              <router-link to="/login">
-                <v-btn color="blue-lighten-2" variant="text"> ADD Cart </v-btn>
+              <router-link :to="'/addtocart/' + book.id">
+                <v-btn
+                  color="blue-lighten-2"
+                  variant="text"
+                  @click="addToCart(book)"
+                >
+                  ADD Cart
+                </v-btn>
               </router-link>
-              <v-btn color="blue-lighten-2" variant="text"> Description </v-btn>
-
+              <router-link :to="'/product/' + book.id">
+                <v-btn color="blue-lighten-2" variant="text">
+                  Description
+                </v-btn>
+              </router-link>
               <v-spacer></v-spacer>
-
-              <v-btn
-                :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                @click="show = !show"
-              ></v-btn>
             </v-card-actions>
 
-            <v-expand-transition>
-              <div v-show="show">
-                <v-divider></v-divider>
-
-                <v-card-text v-model="description">
-                  <b>description:</b>{{ product.description }}
-                </v-card-text>
-              </div>
-            </v-expand-transition>
+            <v-expand-transition> </v-expand-transition>
           </v-card>
         </v-col>
       </v-row>
@@ -54,30 +48,32 @@
 </template>
 
 <script>
-
-
 import axios from "axios";
+import apiservice from "@/Service/Api.js";
 export default {
-
   name: "ProductCard",
   data: () => ({
     show: false,
-    products: [],
+    books: [],
+    cart: [],
     searchText: "",
   }),
   computed: {
-    filteredProducts() {
+    filteredbooks() {
       // Filter products based on searchText
-      return this.products.filter((product) =>
-        product.title.toLowerCase().includes(this.searchText.toLowerCase())
+      return this.books.filter((book) =>
+        book.title.toLowerCase().includes(this.searchText.toLowerCase())
       );
-    }
+    },
   },
   async mounted() {
-    let result = await axios.get("https://dummyjson.com/products");
-    this.products = result.data.products;
-
-      
+    let result = await axios.get(" http://10.0.10.220:8080/api/book");
+    this.books = result.data.books;
+  },
+  methods: {
+    addToCart(books) {
+      apiservice.addToCart(book);
+    },
   },
 };
 </script>

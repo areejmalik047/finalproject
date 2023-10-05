@@ -16,16 +16,21 @@
       ></v-text-field>
 
       <v-text-field
-        v-model="Password"
+        v-model="password"
         label="password"
         :rule="passwordRule"
         type="password"
         :counter="8"
       ></v-text-field>
+      <v-text-field
+        v-model="confirm_password"
+        label="confirm-password"
+        :rule="confirm_password"
+        type="password"
+        :counter="8"
+      ></v-text-field>
 
-      <v-btn type="submit" block class="mt-2" v-on:click="saveData"
-        >Signup</v-btn
-      >
+      <v-btn type="submit" block class="mt-2" @click="Data">Signup</v-btn>
       <router-link to="/login">
         <h3>Login</h3>
       </router-link>
@@ -39,9 +44,15 @@ export default {
   data() {
     return {
       name: "",
+      password: "",
       email: "",
-      Password: "",
-      email: "",
+      users: [],
+      confirm_password: "",
+      NameRules: [
+        (v) => !!v || "Name is required",
+        (v) => (v && v.length <= 4) || "Name must be less than 4 characters",
+      ],
+
       NameRules: [
         (value) => {
           if (value?.length >= 3) return true;
@@ -72,18 +83,16 @@ export default {
     };
   },
   methods: {
-    async saveData() {
-      let result = await axios.post("http://10.0.10.216:80/api/register", {
+    async Data() {
+      let result = await axios.post("http://10.0.10.220:8080/api/register", {
         name: this.name,
         email: this.email,
-        password: this.Password,
+        password: this.password,
+        confirm_password: this.confirm_password,
       });
-      console.log(result);
-      if (result.status == 200) {
-        alert("Success");
-        //localStorage.setItem("user", JSON.stringify(result));
-        this.$router.push({ name: "Homepage" });
-      }
+      this.users = result.data.user;
+      console.log("Registration successful:", this.users);
+      this.$router.push("/login");
     },
   },
 };

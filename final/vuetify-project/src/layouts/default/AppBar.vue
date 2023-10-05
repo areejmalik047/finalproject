@@ -33,26 +33,14 @@
           </router-link>
         </div>
         <div>
-          <router-link to="/signup">
-            <v-btn color="white">Signup</v-btn>
-          </router-link>
+          <v-btn v-if="!userAuthenticated" @click="navigateTo('login')"
+            >Login</v-btn
+          >
+          <v-btn v-if="!userAuthenticated" @click="navigateTo('signup')"
+            >Register</v-btn
+          >
+          <v-btn v-else @click="logout()">Logout</v-btn>
         </div>
-        <div>
-          <router-link to="/login">
-            <v-btn color="white">Login</v-btn>
-          </router-link>
-        </div>
-        <v-btn icon>
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
-
-        <v-btn icon>
-          <v-icon>mdi-heart</v-icon>
-        </v-btn>
-
-        <v-btn icon>
-          <v-icon>mdi-dots-vertical</v-icon>
-        </v-btn>
       </v-app-bar>
 
       <v-main> </v-main>
@@ -60,6 +48,46 @@
   </v-card>
 </template>
 
-<script setup>
-//
+<script>
+import axios from "axios";
+export default {
+  data() {
+    return {
+      userAuthenticated: false,
+      yourAuthToken: localStorage.getItem("token"),
+    };
+  },
+
+  methods: {
+    navigateTo(route){
+      this.$router.push("/"+route)
+    }
+    ,
+    async logout() {
+      try {
+        axios.post("10.0.10.220:8080/api/logout", null, {
+          headers: {
+            Authorization: `Bearer ${this.yourAuthToken}`,
+          },
+        });
+
+        localStorage.removeItem("token");
+
+        this.userAuthenticated = false;
+
+        this.$router.push("/login");
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    },
+  },
+  created() {
+
+if (this.yourAuthToken !== null) {
+
+  this.userAuthenticated = true;
+
+}
+  }
+};
 </script>
